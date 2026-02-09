@@ -5,7 +5,7 @@ export function createChartOptions<TType extends ChartType = ChartType>(
   title: string,
   additionalOptions?: Partial<ChartOptions<TType>>
 ): ChartOptions<TType> {
-  const baseOptions: ChartOptions<TType> = {
+  return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -17,7 +17,7 @@ export function createChartOptions<TType extends ChartType = ChartType>(
             size: 12,
             family: "'Inter', sans-serif",
           },
-          color: "#ffffff", // White text for legend
+          color: "#ffffff",
         },
       },
       tooltip: {
@@ -41,19 +41,12 @@ export function createChartOptions<TType extends ChartType = ChartType>(
           family: "'Inter', sans-serif",
         },
         padding: { bottom: 16 },
-        color: "#ffffff", // White text for title
+        color: "#ffffff",
       },
-    },
-  };
-
-  return {
-    ...baseOptions,
-    ...additionalOptions,
-    plugins: {
-      ...baseOptions.plugins,
       ...additionalOptions?.plugins,
     },
-  };
+    ...additionalOptions,
+  } as ChartOptions<TType>;
 }
 
 // Helper to create scale options for charts that need them (bar, line, etc.)
