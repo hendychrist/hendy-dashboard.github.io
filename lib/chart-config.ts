@@ -1,7 +1,7 @@
-import { ChartOptions } from "chart.js";
+import { ChartOptions, ChartType } from "chart.js";
 
 // Base chart options
-export const baseChartOptions: ChartOptions = {
+export const baseChartOptions: ChartOptions<ChartType> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -56,7 +56,10 @@ export const baseChartOptions: ChartOptions = {
 };
 
 // Create options for chart with title
-export function createChartOptions(title: string, additionalOptions?: Partial<ChartOptions>): ChartOptions {
+export function createChartOptions<TType extends ChartType = ChartType>(
+  title: string,
+  additionalOptions?: Partial<ChartOptions<TType>>
+): ChartOptions<TType> {
   return {
     ...baseChartOptions,
     plugins: {

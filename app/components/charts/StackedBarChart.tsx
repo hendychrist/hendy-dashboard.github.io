@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { createChartOptions } from "../../../lib/chart-config";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -53,7 +54,7 @@ export function StackedBarChart({ data, title }: StackedBarChartProps) {
     ],
   };
 
-  const options = createChartOptions(title || "Stacked Bar Chart", {
+  const options: ChartOptions<"bar"> = createChartOptions<"bar">(title || "Stacked Bar Chart", {
     scales: {
       x: {
         stacked: true,

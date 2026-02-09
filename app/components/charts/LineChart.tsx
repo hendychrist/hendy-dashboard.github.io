@@ -12,6 +12,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { createChartOptions } from "../../../lib/chart-config";
 
 ChartJS.register(
@@ -55,7 +56,7 @@ export function LineChart({ labels, data, title }: LineChartProps) {
     })),
   };
 
-  const options = createChartOptions(title || "Trend", {
+  const options: ChartOptions<"line"> = createChartOptions<"line">(title || "Trend", {
     scales: {
       x: {
         grid: {

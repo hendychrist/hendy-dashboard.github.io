@@ -2,6 +2,7 @@
 
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { createChartOptions, generateBackgroundColors } from "../../../lib/chart-config";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -43,10 +44,10 @@ export function DonutChart({ data, title, centerText, size = "md" }: DonutChartP
     ],
   };
 
-  const options = createChartOptions(title || "Distribution", {
+  const options: ChartOptions<"doughnut"> = createChartOptions<"doughnut">(title || "Distribution", {
     cutout: "70%",
     plugins: {
-      ...createChartOptions(title || "Distribution").plugins,
+      ...createChartOptions<"doughnut">(title || "Distribution").plugins,
       legend: {
         display: !!title,
         position: "bottom" as const,

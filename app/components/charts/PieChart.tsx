@@ -2,6 +2,7 @@
 
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { createChartOptions, generateBackgroundColors } from "../../../lib/chart-config";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -29,7 +30,7 @@ export function PieChart({ data, title }: PieChartProps) {
     ],
   };
 
-  const options = createChartOptions(title || "Distribution");
+  const options: ChartOptions<"pie"> = createChartOptions<"pie">(title || "Distribution");
 
   return (
     <div className="relative h-80 w-full">

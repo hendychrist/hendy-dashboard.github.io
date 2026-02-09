@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import type { ChartOptions } from "chart.js";
 import { createChartOptions, generateBackgroundColors } from "../../../lib/chart-config";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -40,7 +41,7 @@ export function BarChart({ data, title, horizontal = false, showLabels = true }:
     ],
   };
 
-  const options: typeof createChartOptions extends (...args: any[]) => infer R ? R : never = createChartOptions(title || "Bar Chart", {
+  const options: ChartOptions<"bar"> = createChartOptions<"bar">(title || "Bar Chart", {
     indexAxis: horizontal ? "y" : "x",
     scales: {
       x: {
