@@ -1,65 +1,430 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import Link from "next/link";
+import { PieChart } from "@/app/components/charts/PieChart";
+import { BarChart } from "@/app/components/charts/BarChart";
+import { StackedBarChart } from "@/app/components/charts/StackedBarChart";
+import { DonutChart } from "@/app/components/charts/DonutChart";
+import { KPICard } from "@/app/components/kpi/KPICard";
+import { RiskIndicator } from "@/app/components/insights/RiskIndicator";
+import { Filters } from "@/app/components/Filters";
+import { useDashboardData, DashboardFilters } from "@/app/hooks/useDashboardData";
+import { calculatePercentage, formatNumber } from "@/lib/utils";
+
+export default function DashboardPage() {
+  // Get available filter options from data (will be populated on first load)
+  const [availableStates] = useState([
+    "SP", "RJ", "MG", "RS", "PR", "SC", "BA", "PE", "GO", "ES", "CE", "PA", "MT", "DF", "AM"
+  ]);
+  const [availablePayments] = useState([
+    "credit_card", "boleto", "voucher", "debit_card"
+  ]);
+  const [availableMonths] = useState(() => {
+    const months: string[] = [];
+    const startYear = 2016;
+    const startMonth = 9; // September
+    const endYear = 2018;
+    const endMonth = 9; // September
+
+    let currentYear = startYear;
+    let currentMonth = startMonth;
+
+    while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+      months.push(`${currentYear}-${String(currentMonth).padStart(2, "0")}`);
+      currentMonth++;
+      if (currentMonth > 12) {
+        currentMonth = 1;
+        currentYear++;
+      }
+    }
+
+    return months;
+  });
+
+  // Initialize filters with full date range
+  const [filters, setFilters] = useState<DashboardFilters>({
+    status: "all",
+    payment: "all",
+    state: "all",
+    monthStart: availableMonths[0],
+    monthEnd: availableMonths[availableMonths.length - 1],
+  });
+
+  // Fetch dashboard data with filters
+  const { data, loading, error } = useDashboardData(filters);
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">Error: {error}</div>
+          <p className="text-white">Failed to load dashboard data</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { kpi, deliveryStatus, statePerformance, monthlyTrends, productCategories, paymentMethods, reviewsAnalysis, customerDemographics } = data;
+
+  const totalOrders = kpi.totalOrders;
+  const deliveryRate = kpi.deliveredRate;
+  const pendingOrders = deliveryStatus
+    .filter((d) => !["delivered", "canceled"].includes(d.status))
+    .reduce((sum, d) => sum + d.count, 0);
+  const canceledCount = deliveryStatus.find((d) => d.status === "canceled")?.count || 0;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Header */}
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white">
+                Olist Analytics Dashboard
+              </h1>
+              <p className="mt-1 text-sm text-white">
+                Hendy Christian - 2602623415
+              </p>
+            </div>
+            <Link
+              href="/model"
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
+            >
+              ML Model Insights →
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Global Filters */}
+        <Filters
+          filters={filters}
+          setFilters={setFilters}
+          availableStates={availableStates}
+          availablePayments={availablePayments}
+          availableMonths={availableMonths}
+          loading={loading}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* KPI Section */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Key Performance Indicators
+            {loading && <span className="ml-2 text-sm font-normal text-white">Updating...</span>}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <KPICard
+              title="Total Orders"
+              value={formatNumber(totalOrders)}
+              color="blue"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <KPICard
+              title="Delivery Rate"
+              value={`${deliveryRate}%`}
+              change="Success rate"
+              changeType="positive"
+              color="green"
+            />
+            <KPICard
+              title="Total Revenue"
+              value={`R$${formatNumber(kpi.totalRevenue)}`}
+              change="From filtered data"
+              changeType="positive"
+              color="purple"
+            />
+            <KPICard
+              title="Avg Review Score"
+              value={kpi.avgReviewScore.toFixed(1)}
+              change="/ 5.0"
+              changeType={kpi.avgReviewScore >= 4 ? "positive" : "neutral"}
+              color="amber"
+            />
+          </div>
+        </section>
+
+        {/* Order Status Distribution */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Order Status Distribution
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <PieChart
+                data={deliveryStatus.map((d) => ({ label: d.status, value: d.count }))}
+                title="Status Distribution"
+              />
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <BarChart
+                data={deliveryStatus.map((d) => ({ label: d.status, value: d.count }))}
+                title="Orders by Status"
+                horizontal
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Product Categories Performance */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Product Categories Performance
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <BarChart
+                data={productCategories.slice(0, 10).map((cat) => ({
+                  label: cat.category.length > 20 ? cat.category.substring(0, 20) + "..." : cat.category,
+                  value: cat.orderCount,
+                }))}
+                title="Top 10 Categories by Orders"
+                horizontal
+              />
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <BarChart
+                data={productCategories.slice(0, 10).map((cat) => ({
+                  label: cat.category.length > 20 ? cat.category.substring(0, 20) + "..." : cat.category,
+                  value: cat.revenue,
+                }))}
+                title="Top 10 Categories by Revenue"
+                horizontal
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Payment Methods & Reviews */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Payment Methods & Customer Reviews
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Payment Methods */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Payment Methods Distribution
+              </h3>
+              <div className="flex items-center gap-6">
+                {/* Donut Chart - smaller, no center text */}
+                <div className="flex-shrink-0">
+                  <DonutChart
+                    data={paymentMethods.map((pm) => ({ label: pm.paymentType, value: pm.transactionCount }))}
+                    title=""
+                    centerText=""
+                  />
+                </div>
+                {/* Legend - right side */}
+                <div className="flex-1 space-y-2">
+                  {paymentMethods.map((pm, idx) => {
+                    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+                    return (
+                      <div key={pm.paymentType} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: colors[idx % colors.length] }}
+                          />
+                          <span className="text-sm text-white font-medium capitalize">
+                            {pm.paymentType.replace(/_/g, " ")}
+                          </span>
+                        </div>
+                        <span className="text-sm font-bold text-white bg-gray-700 dark:bg-gray-600 px-2 py-1 rounded">
+                          {pm.percentage.toFixed(1)}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Total count */}
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                <span className="text-sm text-white">
+                  Total Payment Methods:{" "}
+                  <span className="font-bold text-white">{paymentMethods.length}</span>
+                </span>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <BarChart
+                data={reviewsAnalysis.scoreDistribution.map((sd) => ({
+                  label: `${sd.score} Star${sd.score > 1 ? "s" : ""}`,
+                  value: sd.count,
+                }))}
+                title="Review Score Distribution"
+              />
+              <div className="mt-4 grid grid-cols-2 gap-4 text-center">
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded">
+                  <p className="text-xs text-white">Positive</p>
+                  <p className="text-lg font-bold text-green-600">{reviewsAnalysis.positivePercentage}%</p>
+                </div>
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded">
+                  <p className="text-xs text-white">Negative</p>
+                  <p className="text-lg font-bold text-red-600">{reviewsAnalysis.negativePercentage}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Customer Demographics */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Customer Demographics
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <BarChart
+                data={customerDemographics.byState.slice(0, 10).map((state) => ({
+                  label: state.state,
+                  value: state.customerCount,
+                }))}
+                title="Top 10 States by Customers"
+                horizontal
+              />
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Top Cities</h3>
+              <div className="space-y-3">
+                {customerDemographics.topCities.map((city, idx) => (
+                  <div key={city.city} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-bold text-white w-6">#{idx + 1}</span>
+                      <span className="text-sm text-white">{city.city}</span>
+                    </div>
+                    <span className="text-sm font-semibold">{formatNumber(city.count)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* State Performance */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Delivery Performance by State
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <StackedBarChart
+              data={statePerformance.map((s) => ({
+                label: s.state,
+                datasets: {
+                  onTime: s.deliveredOnTime,
+                  late: s.deliveredLate,
+                  canceled: s.canceled,
+                },
+              }))}
+              title="Orders by State (Top 15)"
+            />
+          </div>
+        </section>
+
+        {/* Monthly Trends */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Monthly Order Trends
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <BarChart
+              data={monthlyTrends.map((t) => ({
+                label: t.month,
+                value: t.totalOrders,
+              }))}
+              title="Monthly Orders (Filtered Range)"
+            />
+          </div>
+        </section>
+
+        {/* Risk Indicators */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Operational Risk Indicators
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <RiskIndicator
+              nonDeliveredRate={calculatePercentage(canceledCount + pendingOrders, totalOrders)}
+              pendingOrdersRate={calculatePercentage(pendingOrders, totalOrders)}
+            />
+          </div>
+        </section>
+
+        {/* Insights Summary */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Executive Summary
+          </h2>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-lg shadow-lg p-6 border border-blue-100 dark:border-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
+                  {deliveryRate}%
+                </div>
+                <p className="text-sm text-white">
+                  Delivery Success Rate
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">
+                  {statePerformance.length}
+                </div>
+                <p className="text-sm text-white">
+                  States Covered
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-purple-600 mb-2">
+                  {kpi.totalRevenue > 0 ? `R$${(kpi.totalRevenue / 1000000).toFixed(1)}M` : "R$0"}
+                </div>
+                <p className="text-sm text-white">
+                  Total Revenue
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-amber-600 mb-2">
+                  {kpi.avgReviewScore.toFixed(1)}
+                </div>
+                <p className="text-sm text-white">
+                  Avg Customer Rating
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Filter Summary */}
+        <section className="mb-8">
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-800 dark:text-blue-300">
+              <strong>Active Filters:</strong> Status: {filters.status === "all" ? "All" : filters.status} |
+              Payment: {filters.payment === "all" ? "All" : filters.payment} |
+              State: {filters.state === "all" ? "All" : filters.state} |
+              Date Range: {filters.monthStart} to {filters.monthEnd}
+            </p>
+          </div>
+        </section>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-white">
+          <p>Olist Big Data Analytics Dashboard • Powered by Apache Spark & Machine Learning</p>
+          <p className="mt-1">Interactive Analysis with Real-time Filtering</p>
+        </div>
+      </footer>
     </div>
   );
 }
