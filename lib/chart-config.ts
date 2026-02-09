@@ -1,69 +1,37 @@
 import { ChartOptions, ChartType } from "chart.js";
 
-// Base chart options
-export const baseChartOptions: ChartOptions<ChartType> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "top" as const,
-      labels: {
-        padding: 16,
-        font: {
-          size: 12,
-          family: "'Inter', sans-serif",
-        },
-        color: "#ffffff", // White text for legend
-      },
-    },
-    tooltip: {
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      padding: 12,
-      titleFont: {
-        size: 14,
-        weight: "bold",
-      },
-      bodyFont: {
-        size: 13,
-      },
-      cornerRadius: 8,
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        color: "#ffffff", // White text for x-axis labels
-        font: {
-          size: 11,
-        },
-      },
-      grid: {
-        color: "rgba(255, 255, 255, 0.1)", // Subtle white grid lines
-      },
-    },
-    y: {
-      ticks: {
-        color: "#ffffff", // White text for y-axis labels
-        font: {
-          size: 11,
-        },
-      },
-      grid: {
-        color: "rgba(255, 255, 255, 0.1)", // Subtle white grid lines
-      },
-    },
-  },
-};
-
 // Create options for chart with title
 export function createChartOptions<TType extends ChartType = ChartType>(
   title: string,
   additionalOptions?: Partial<ChartOptions<TType>>
 ): ChartOptions<TType> {
-  return {
-    ...baseChartOptions,
+  const baseOptions: ChartOptions<TType> = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      ...baseChartOptions.plugins,
+      legend: {
+        position: "top" as const,
+        labels: {
+          padding: 16,
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif",
+          },
+          color: "#ffffff", // White text for legend
+        },
+      },
+      tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: "bold",
+        },
+        bodyFont: {
+          size: 13,
+        },
+        cornerRadius: 8,
+      },
       title: {
         display: true,
         text: title,
@@ -75,9 +43,31 @@ export function createChartOptions<TType extends ChartType = ChartType>(
         padding: { bottom: 16 },
         color: "#ffffff", // White text for title
       },
+    },
+  };
+
+  return {
+    ...baseOptions,
+    ...additionalOptions,
+    plugins: {
+      ...baseOptions.plugins,
       ...additionalOptions?.plugins,
     },
-    ...additionalOptions,
+  };
+}
+
+// Helper to create scale options for charts that need them (bar, line, etc.)
+export function createScaleOptions(color = "#ffffff", gridColor = "rgba(255, 255, 255, 0.1)") {
+  return {
+    ticks: {
+      color,
+      font: {
+        size: 11,
+      },
+    },
+    grid: {
+      color: gridColor,
+    },
   };
 }
 
