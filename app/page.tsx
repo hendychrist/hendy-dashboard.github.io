@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { PieChart } from "@/app/components/charts/PieChart";
-import { BarChart } from "@/app/components/charts/BarChart";
-import { StackedBarChart } from "@/app/components/charts/StackedBarChart";
-import { DonutChart } from "@/app/components/charts/DonutChart";
-import { KPICard } from "@/app/components/kpi/KPICard";
-import { RiskIndicator } from "@/app/components/insights/RiskIndicator";
-import { Filters } from "@/app/components/Filters";
-import { useDashboardData, DashboardFilters } from "@/app/hooks/useDashboardData";
-import { calculatePercentage, formatNumber } from "@/lib/utils";
+import { PieChart } from "./components/charts/PieChart";
+import { BarChart } from "./components/charts/BarChart";
+import { StackedBarChart } from "./components/charts/StackedBarChart";
+import { DonutChart } from "./components/charts/DonutChart";
+import { KPICard } from "./components/kpi/KPICard";
+import { RiskIndicator } from "./components/insights/RiskIndicator";
+import { Filters } from "./components/Filters";
+import { useDashboardData, DashboardFilters } from "./hooks/useDashboardData";
+import { calculatePercentage, formatNumber } from "../lib/utils";
 
 export default function DashboardPage() {
   // Get available filter options from data (will be populated on first load)

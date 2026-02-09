@@ -2,7 +2,7 @@
 
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { DashboardFilters } from "@/hooks/useDashboardData";
+import { DashboardFilters } from "../hooks/useDashboardData";
 
 interface FiltersProps {
   filters: DashboardFilters;

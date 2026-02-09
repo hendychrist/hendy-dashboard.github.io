@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { createChartOptions, generateBackgroundColors } from "@/lib/chart-config";
+import { createChartOptions, generateBackgroundColors } from "../../../lib/chart-config";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

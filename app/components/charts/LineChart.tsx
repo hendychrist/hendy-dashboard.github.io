@@ -12,7 +12,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { createChartOptions } from "@/lib/chart-config";
+import { createChartOptions } from "../../../lib/chart-config";
 
 ChartJS.register(
   CategoryScale,
