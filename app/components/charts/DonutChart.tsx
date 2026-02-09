@@ -25,6 +25,11 @@ export function DonutChart({ data, title, centerText, size = "md" }: DonutChartP
     lg: "h-80 w-80",
   };
 
+  // Compute colors at component level (not in chart options)
+  const isDark = typeof window !== "undefined" && document.documentElement.classList.contains("dark");
+  const borderColor = isDark ? "#1f2937" : "#fff";
+  const legendColor = "#9ca3af";
+
   const chartData = {
     labels,
     datasets: [
@@ -32,13 +37,7 @@ export function DonutChart({ data, title, centerText, size = "md" }: DonutChartP
         data: values,
         backgroundColor: colors,
         borderWidth: 2,
-        borderColor: () => {
-          // Check if dark mode is active
-          if (typeof window !== "undefined" && document.documentElement.classList.contains("dark")) {
-            return "#1f2937";
-          }
-          return "#fff";
-        },
+        borderColor,
         hoverOffset: 8,
       },
     ],
@@ -56,13 +55,7 @@ export function DonutChart({ data, title, centerText, size = "md" }: DonutChartP
           font: {
             size: 11,
           },
-          color: () => {
-            // Check if dark mode is active
-            if (typeof window !== "undefined" && document.documentElement.classList.contains("dark")) {
-              return "#e5e7eb";
-            }
-            return "#374151";
-          },
+          color: legendColor,
         },
       },
     },
