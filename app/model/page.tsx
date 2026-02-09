@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MLMetrics } from "../../types";
 import { formatNumber } from "../../lib/utils";
-import { MLMetricsCard } from "./components/insights/MLMetricsCard";
+import { MLMetricsCard } from "../components/insights/MLMetricsCard";
 
 export default function ModelPage() {
   const [mlMetrics, setMLMetrics] = useState<MLMetrics | null>(null);
