@@ -44,7 +44,7 @@ export async function GET() {
     const avgScore = totalScore / reviewsParsed.data.length;
 
     // Calculate percentage of positive reviews (4-5 stars)
-    const positiveReviews = scoreCounts.get(5) || 0 + scoreCounts.get(4) || 0;
+    const positiveReviews = (scoreCounts.get(5) ?? 0) + (scoreCounts.get(4) ?? 0);
     const positivePercentage = (positiveReviews / reviewsParsed.data.length) * 100;
 
     return Response.json({
