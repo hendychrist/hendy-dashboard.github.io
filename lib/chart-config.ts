@@ -42,13 +42,14 @@ export function createChartOptions<TType extends ChartType = ChartType>(
     },
   };
 
+  const opts = additionalOptions as any;
   return {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: additionalOptions?.plugins
-      ? { ...basePlugins, ...(additionalOptions.plugins as any) }
+    plugins: opts?.plugins
+      ? { ...basePlugins, ...opts.plugins }
       : basePlugins,
-    ...additionalOptions,
+    ...opts,
   } as ChartOptions<TType>;
 }
 
