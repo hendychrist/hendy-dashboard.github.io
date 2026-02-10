@@ -233,7 +233,7 @@ export default function ModelPage() {
                 ⚠️ Class Imbalance Detected
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                The dataset shows significant class imbalance with the "delivered" class dominating.
+                The dataset shows significant class imbalance with the &quot;delivered&quot; class dominating.
                 This can lead to biased model predictions.
               </p>
               <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">

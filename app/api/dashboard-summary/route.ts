@@ -340,7 +340,6 @@ export async function GET(req: NextRequest) {
 
     // Reviews analysis
     const scoreCounts = new Map<number, number>();
-    let totalReviewScore = 0;
     let totalReviewCount = 0;
 
     filteredOrders.forEach((order) => {

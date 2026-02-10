@@ -77,7 +77,7 @@ export const colorPalette = [
 ];
 
 // Generate background colors
-export function generateBackgroundColors(count: number, alpha = 1): string[] {
+export function generateBackgroundColors(count: number): string[] {
   const colors: string[] = [];
   for (let i = 0; i < count; i++) {
     const color = colorPalette[i % colorPalette.length];
