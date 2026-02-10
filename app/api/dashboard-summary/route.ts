@@ -347,7 +347,6 @@ export async function GET(req: NextRequest) {
       if (review) {
         const count = scoreCounts.get(review.review_score) || 0;
         scoreCounts.set(review.review_score, count + 1);
-        totalReviewScore += review.review_score;
         totalReviewCount++;
       }
     });
