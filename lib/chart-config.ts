@@ -5,46 +5,49 @@ export function createChartOptions<TType extends ChartType = ChartType>(
   title: string,
   additionalOptions?: Partial<ChartOptions<TType>>
 ): ChartOptions<TType> {
+  const basePlugins = {
+    legend: {
+      position: "top" as const,
+      labels: {
+        padding: 16,
+        font: {
+          size: 12,
+          family: "'Inter', sans-serif",
+        },
+        color: "#ffffff",
+      },
+    },
+    tooltip: {
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      padding: 12,
+      titleFont: {
+        size: 14,
+        weight: "bold",
+      },
+      bodyFont: {
+        size: 13,
+      },
+      cornerRadius: 8,
+    },
+    title: {
+      display: true,
+      text: title,
+      font: {
+        size: 16,
+        weight: "bold" as const,
+        family: "'Inter', sans-serif",
+      },
+      padding: { bottom: 16 },
+      color: "#ffffff",
+    },
+  };
+
   return {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top" as const,
-        labels: {
-          padding: 16,
-          font: {
-            size: 12,
-            family: "'Inter', sans-serif",
-          },
-          color: "#ffffff",
-        },
-      },
-      tooltip: {
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        padding: 12,
-        titleFont: {
-          size: 14,
-          weight: "bold",
-        },
-        bodyFont: {
-          size: 13,
-        },
-        cornerRadius: 8,
-      },
-      title: {
-        display: true,
-        text: title,
-        font: {
-          size: 16,
-          weight: "bold" as const,
-          family: "'Inter', sans-serif",
-        },
-        padding: { bottom: 16 },
-        color: "#ffffff",
-      },
-      ...(additionalOptions?.plugins as any),
-    },
+    plugins: additionalOptions?.plugins
+      ? { ...basePlugins, ...(additionalOptions.plugins as any) }
+      : basePlugins,
     ...additionalOptions,
   } as ChartOptions<TType>;
 }
