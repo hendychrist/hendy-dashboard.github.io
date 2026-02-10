@@ -43,7 +43,7 @@ export function createChartOptions<TType extends ChartType = ChartType>(
         padding: { bottom: 16 },
         color: "#ffffff",
       },
-      ...additionalOptions?.plugins,
+      ...(additionalOptions?.plugins as any),
     },
     ...additionalOptions,
   } as ChartOptions<TType>;
