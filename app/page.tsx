@@ -99,12 +99,22 @@ export default function DashboardPage() {
                 Hendy Christian - 2602623415
               </p>
             </div>
-            <Link
-              href="/model"
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              ML Model Insights →
-            </Link>
+            <div className="flex gap-3">
+              <a
+                href="https://example.com/?status=success&userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                ✓ Complete Bank Case
+              </a>
+              <Link
+                href="/model"
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                ML Model Insights →
+              </Link>
+            </div>
           </div>
         </div>
       </header>
